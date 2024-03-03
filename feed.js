@@ -7,7 +7,7 @@ const nav = $("#nav")[0];
 
 async function mpe(e) {
   if (!window.NostrTools.validateEvent(e) || !window.NostrTools.verifySignature(e)) return;
-  //if (!authors[e.pubkey]) authors[e.pubkey] = {};
+  if (!authors[e.pubkey]) authors[e.pubkey] = {};
 
   const tags = new Map(e?.tags.filter(i => !i.includes(i.id)));
   const p = document.createElement("div"); //div cont
