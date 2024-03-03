@@ -92,6 +92,7 @@ async function gp() {
 
 let tim = null;
 window.onscroll = _ => {
+  bb.style.visibility = "hidden";
   clearTimeout(tim);
   tim = setTimeout(gp, 100);
 }

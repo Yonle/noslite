@@ -112,8 +112,6 @@ function rt(t) {
     .split("<br>").map(mme).join("<br>");
 }
 
-window.onscroll = _ => bb.style.visibility = "hidden";
-
 bb.onclick = _ => bb.style.visibility = "hidden";
 setInterval(_ => {
   cl.innerText = (new Date()).toLocaleTimeString();
