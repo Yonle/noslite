@@ -74,22 +74,23 @@ function getFeed(filter = {}) {
 }
 
 async function gp() {
-  const keys = Object.keys(authors);
+  const keys = Object.keys(authors).filter(i => !Object.keys(authors[i]).length);
 
-  if (!keys.length) return;
-  bb.innerText = "Fetching profiles....";
-  bb.style.visibility = "visible";
-  try {
-    const evs = await pool.list(relays, [{
-      kinds: [0],
-      authors: keys
-    }]);
-    evs.forEach(sp);
-
-    bb.style.visibility = "hidden";
-  } catch {
-    bb.innerText = "Failed fetching profiles.";
+  if (keys.length) {
+    bb.innerText = "Fetching profiles....";
     bb.style.visibility = "visible";
+    try {
+      const evs = await pool.list(relays, [{
+        kinds: [0],
+        authors: keys
+      }]);
+      evs.forEach(sp);
+
+      bb.style.visibility = "hidden";
+    } catch {
+      bb.innerText = "Failed fetching profiles.";
+      bb.style.visibility = "visible";
+    }
   }
 }
 
@@ -99,3 +100,5 @@ window.onscroll = _ => {
   clearTimeout(tim);
   tim = setTimeout(gp, 100);
 }
+
+getDefaultFeed();
