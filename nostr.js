@@ -74,7 +74,7 @@ function getFeed(filter = {}) {
 }
 
 async function gp() {
-  const keys = Object.keys(authors).filter(i => !Object.keys(authors[i]).length);
+  const keys = Object.keys(authors).filter(i => !authors[i].name && !authors[i].meta_name);
 
   if (keys.length) {
     bb.innerText = "Fetching profiles....";
