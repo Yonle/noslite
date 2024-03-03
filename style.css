@@ -2,6 +2,7 @@
   --font: "Courier New", monospace, ui-monospace;
   --background: lightyellow;
   --color: black;
+  --maincolor: orangered;
 }
 
 body {
@@ -13,7 +14,7 @@ body {
 }
 
 .u {
-  color: orangered;
+  color: var(--maincolor);
   font-weight: bold;
 }
 

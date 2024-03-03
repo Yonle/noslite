@@ -5,12 +5,13 @@ let sub = null;
 let inThread = false;
 
 relays = relays.filter(i => !!i);
-if (!relays.length) {
-  bb.innerText = "No relay was configured. Please configure one."
-  location.hash = "#relays";
-} else getDefaultFeed();
 
 async function getDefaultFeed() {
+  if (!relays.length) {
+    bb.innerText = "No relay was configured. Please configure one."
+    location.hash = "#relays";
+  }
+
   if (privkey) {
     bb.innerText = "Fetching contact list....";
     bb.style.visibility = "visible";
@@ -72,7 +73,9 @@ function getFeed(filter = {}) {
 }
 
 async function gp() {
-  const keys = Object.keys(authors).filter(i => authors[i] != {});
+  const keys = Object.keys(authors).filter(i => !Object.keys(authors[i]).length);
+
+  if (!keys.length) return;
   bb.innerText = "Fetching profiles....";
   bb.style.visibility = "visible";
   try {
