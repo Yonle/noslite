@@ -10,8 +10,10 @@ function updateRelaysList() {
 }
 
 async function lt(id) {
-  inThread = true;
-  sub.unsub();
+  for (const id of sess) {
+    sendToRelays("CLOSE", id);
+    sess.delete(id);
+  }
   let rootpost = document.getElementById("n_" + id)
   if (rootpost) {
     rootpost = rootpost.cloneNode(true);
@@ -33,20 +35,21 @@ async function lt(id) {
   ps.appendChild(br.cloneNode(true));
   if (rootpost) ps.appendChild(rootpost);
   else ps.appendChild(await mpe(await pool.get(relays, { ids: [id] })));
-  const events = await pool.list(relays, [{
+  const currentSess = "notes_" + Date.now();
+  sess.add(currentSess);
+  sendToRelays("REQ", currentSess, {
     kinds: [1],
     "#e": [id]
-  }]);
-  
-  for (i of events) {
-    ps.appendChild(await mpe(i));
-  }
+  });
 }
 
 async function lp(pubkey) {
   inThread = true;
-  sub.unsub();
-  let profile = authors[pubkey] || await pool.get(relays, { kinds: [0], authors: [pubkey] });
+  for (const id of sess) {
+    sendToRelays("CLOSE", id);
+    sess.delete(id);
+  }
+  let profile = authors[pubkey];
   
   if (!profile) {
     bb.innerText = "No profile metadata was found.";
@@ -55,8 +58,37 @@ async function lp(pubkey) {
     ps.innerHTML = "";
     profile = (typeof(profile) === "string") ? JSON.parse(profile.content) : profile;
     if (profile.banner) {
-      document.body.style.background = `url('${profile.banner}')`;
-      document.body.style.color = "white";
+      const banner = document.createElement("img");
+      const img = document.createElement("img");
+      const name = document.createElement(`h2`);
+      const about = document.createElement("pre");
+
+      banner.src = tme(profile.banner);
+      img.src = tme(profile.picture);
+      name.innerText = profile.name || profile.meta_name;
+      about.innerText = profile.about;
+
+      banner.style.width = "100vw";
+
+      img.style.width = "120px";
+      name.style.margin = "0";
+
+      const mainprof = document.createElement("div");
+
+      mainprof.appendChild(img);
+      mainprof.appendChild(name);
+
+      ps.appendChild(banner);
+      ps.appendChild(mainprof);
+      ps.appendChild(about);
+
+      const currentSess = "notes_" + Date.now();
+      sess.add(currentSess);
+      sendToRelays("REQ", currentSess, {
+        kinds: [1],
+        "authors": [pubkey],
+        limit: 50
+      });
     }
   }
 }

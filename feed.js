@@ -5,9 +5,12 @@ const cl = $("#cl")[0];
 const br = document.createElement("br");
 const nav = $("#nav")[0];
 
+const sess = new Set();
+
 async function mpe(e) {
   if (!window.NostrTools.validateEvent(e) || !window.NostrTools.verifySignature(e)) return;
   if (!authors[e.pubkey]) authors[e.pubkey] = {};
+  if ($(".n_" + e.id).length) return;
 
   const tags = new Map(e?.tags.filter(i => !i.includes(i.id)));
   const p = document.createElement("div"); //div cont
@@ -62,17 +65,20 @@ async function mpe(e) {
   return p;
 }
 
-function sp(d) {
+// parse profile
+function sp(d, id) {
   if (!window.NostrTools.validateEvent(d) || !window.NostrTools.verifySignature(d)) return;
   const j = JSON.parse(d.content);
   authors[d.pubkey] = j;
   for (i of $(".u_" + d.pubkey)) {
     i.innerText = j.meta_name || j.name || d.pubkey.slice(0, 5) + ":" + d.pubkey.slice(5, 10);
   }
+
+  sendToRelays("CLOSE", id);
 }
 
 function tme(u) {
-  return encodeURI(u);
+  return encodeURIComponent(u);
 }
 
 function mme(t) {
@@ -112,7 +118,24 @@ function rt(t) {
     .split("<br>").map(mme).join("<br>");
 }
 
+async function feed_handleNote(event) {
+  if (sess.has(event[0])) {
+    const p = await mpe(event[1]);
+    ps.appendChild(p);
+  }
+}
+
+
+
+
 bb.onclick = _ => bb.style.visibility = "hidden";
 setInterval(_ => {
   cl.innerText = (new Date()).toLocaleTimeString();
 }, 500);
+
+let tim = null;
+window.onscroll = _ => {
+  bb.style.visibility = "hidden";
+  clearTimeout(tim);
+  tim = setTimeout(gp, 100);
+}

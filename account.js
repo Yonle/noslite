@@ -61,7 +61,7 @@ async function post() {
   
   const signed = await signEvent(event);
   if (!signed) return;
-  pool.publish(relays, signed);
+  sendToRelays("EVENT", signed);
   $("#textareapost")[0].value = "";
   location.hash = "#";
 }

@@ -1,11 +1,13 @@
 const pool = new window.NostrTools.SimplePool();
 let relays = JSON.parse(localStorage.getItem("relays") || "[]");
 let authors = {};
+let contacts = [];
 let sub = null;
 let inThread = false;
 
 relays = relays.filter(i => !!i);
 
+let contactAsked = false;
 async function getDefaultFeed() {
   if (!relays.length) {
     bb.innerText = "No relay was configured. Please configure one.";
@@ -13,92 +15,82 @@ async function getDefaultFeed() {
     return false;
   }
 
+  for (const id of sess) {
+    sendToRelays("CLOSE", id);
+    sess.delete(id);
+  }
+
   if (privkey) {
     bb.innerText = "Fetching contact list....";
     bb.style.visibility = "visible";
-    let contacts = await pool.get(relays, {
+    sendToRelays("REQ", "contacts", {
       kinds: [3],
-      authors: [window.NostrTools.getPublicKey(privkey)]
-    });
-    
-    if (!contacts) {
-      getFeed({ limit: 10 });
-      bb.innerText = "No contact list was found. Fetching default timeline....";
-      bb.style.visibility = "visible";
-      return;
-    }
-    
-    contacts = contacts.tags.filter(i => i[0] === "p").map(i => i[1]);
-    getFeed({
-      limit: 50,
-      authors: contacts,
-      since: (Date.now() / 1000) - 10000
+      authors: [window.NostrTools.getPublicKey(privkey)],
+      limit: 1
     });
 
-    getFeed({
-      limit: 25,
-      "#p": contacts,
-      since: (Date.now() / 1000) - 10000
-    });
+    $("#my_profilelink").href = "#c_" + window.NostrTools.getPublicKey(privkey);
 
-    for (const pub of contacts) {
-      authors[pub] = {};
-    }
-    gp();
-  } else getFeed({ limit: 10 });
+    contactAsked = true;
+  } else getFeed({ kinds: [1], limit: 10 });
+}
+
+function loadFollowingsTimeline() {
+  if (!contactAsked) return false;
+  getFeed({
+    kinds: [1],
+    limit: 100,
+    authors: contacts,
+    since: (Date.now() / 1000) - 10000
+  }, {
+    kinds: [1],
+    limit: 100,
+    "#p": contacts,
+    since: (Date.now() / 1000) - 10000
+  });
+
+  for (const pub of contacts) {
+    authors[pub] = {};
+  }
+  gp();
+
+  contactAsked = false;
 }
 
 $("#relays_textbox")[0].value = relays.join("\n");
 
-function getFeed(filter = {}) {
+function getFeed(...filter) {
   inThread = false;
-  if (sub) sub.unsub();
   ps.innerHTML = "";
   bb.innerText = "Wait....";
-  sub = pool.sub(relays, [{
-    kinds: [1],
-    ...filter
-  }]);
 
-  sub.on('event', async ev => {
-    if (inThread) return;
-    const p = await mpe(ev);
-    ps.appendChild(p);
-  });
+  let currentSess = "notes_" + Date.now();
 
-  sub.on('eose', _ => {
-    gp();
-    bb.innerText = "EOSE received. Now receiving live events";
-    bb.style.visibility = "visible";
-  });
+  sess.add(currentSess);
+
+  sendToRelays("REQ", currentSess, ...filter);
 }
 
 async function gp() {
   const keys = Object.keys(authors).filter(i => !authors[i].name && !authors[i].meta_name);
 
   if (keys.length) {
-    bb.innerText = "Fetching profiles....";
-    bb.style.visibility = "visible";
-    try {
-      const evs = await pool.list(relays, [{
-        kinds: [0],
-        authors: keys
-      }]);
-      evs.forEach(sp);
-
-      bb.style.visibility = "hidden";
-    } catch {
-      bb.innerText = "Failed fetching profiles.";
-      bb.style.visibility = "visible";
-    }
+    sendToRelays("REQ", "profile_" + Date.now(), {
+      kinds: [0],
+      authors: keys
+    });
   }
 }
 
-let tim = null;
-window.onscroll = _ => {
-  bb.style.visibility = "hidden";
-  clearTimeout(tim);
-  tim = setTimeout(gp, 100);
+function myprofile() {
+  if (!authors[location.hash.slice(3)]) return sendToRelays("REQ", "currentprofile", { kinds: [0], authors: [location.hash.slice(3)], limit: 1 });
+  lp(location.hash.slice(3));
 }
 
-getDefaultFeed();
+if (location.hash.startsWith("#u_")) {
+  sendToRelays("REQ", "currentprofile", { kinds: [0], authors: [location.hash.slice(3)], limit: 1 });
+} else {
+  getDefaultFeed();
+}
+
+relays.forEach(makeConn);
