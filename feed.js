@@ -78,7 +78,7 @@ function sp(d, id) {
 }
 
 function tme(u) {
-  return encodeURIComponent(u);
+  return u;
 }
 
 function mme(t) {
