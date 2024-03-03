@@ -8,8 +8,9 @@ relays = relays.filter(i => !!i);
 
 async function getDefaultFeed() {
   if (!relays.length) {
-    bb.innerText = "No relay was configured. Please configure one."
+    bb.innerText = "No relay was configured. Please configure one.";
     location.hash = "#relays";
+    return false;
   }
 
   if (privkey) {
@@ -73,7 +74,7 @@ function getFeed(filter = {}) {
 }
 
 async function gp() {
-  const keys = Object.keys(authors).filter(i => !Object.keys(authors[i]).length);
+  const keys = Object.keys(authors);
 
   if (!keys.length) return;
   bb.innerText = "Fetching profiles....";
