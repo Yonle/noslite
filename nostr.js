@@ -29,7 +29,7 @@ async function getDefaultFeed() {
       limit: 1
     });
 
-    $("#my_profilelink").href = "#u_" + window.NostrTools.getPublicKey(privkey);
+    $("#my_profilelink")[0].href = "#u_" + window.NostrTools.getPublicKey(privkey);
 
     contactAsked = true;
   } else getFeed({ kinds: [1], limit: 10 });
