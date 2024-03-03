@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Noslite</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <span style="position: fixed; bottom: 1.5em; right: 1.5em; color: red; z-index: 3; opacity: 0.4;">Prototype Nostr Client<br><small>Several functions may not work properly</small></span>
+  <div class="dbg" id="t">
+    <span class="u"><b>Noslite</b></span> - Light Nostr Client <span id="cl" class="r"></span><br>
+    <a href="#" onclick="getDefaultFeed()">Home</a> <a href="#relays">Relays</a> <a href="#post">Post</a>
+    <div class="r">
+      <a href="#login" id="loginbutton">Login</a>
+      <a href="#myaccount" id="myaccbutton">Account</a>
+    </div>
+  </div>
+  <div class="w" id="relays">
+    <div class="wc">
+      <h2>Set up relays</h2>
+      <textarea id="relays_textbox" placeholder="wss://example.com
+wss://example.com
+..."></textarea><br>
+      <small>Relay list does not sync,<br>or even published publicly as metadata.</small><br><br>
+      <button type="button" onclick="updateRelaysList()">Save</button>
+      <a href="#">Cancel</a>
+    </div>
+  </div>
+  <div class="w" id="login">
+    <div class="wc">
+      <h2>Login</h2>
+      <input id="privkey" type="password" placeholder="nsec, hex"></input><br><br>
+      <small>You could skip this login if you already have NIP-07 compatible addon enabled.</small><br><br>
+      <button onclick="login()">Login</button>
+      <a href="#myaccount" onclick="makeAccount()">Create Account</a><br><br>
+      <a href="#">&lt;-- Back</a>
+    </div>
+  </div>
+  <div class="w" id="myaccount">
+    <div class="wc">
+      <h2>Your Account</h2>
+      <span>Public Key: <input readonly id="pubkey"></input></span>
+      <span>Private Key: <button onclick="copyPK()">Copy my private key</button></span><br>
+      <span>Session: <button onclick="logout()">Logout</button></span>
+      <br><br><a href="#">&lt;-- Back</a>
+    </div>
+  </div>
+  <div class="w" id="post">
+    <div class="wc">
+      <h2 style="color: white;">Post / Reply</h2>
+      <textarea id="textareapost" placeholder="What's in your mind?"></textarea><br>
+      <button type="submit" onclick="post()">Post</button>
+      <a href="#" style="color: white; font-weight: bold;">Cancel</a>
+    </div>
+  </div>
+
+  <div id="ps"></div>
+  <span id="bb" class="dbg">Hello.</span>
+  <!-- Project -->
+  <script src="nostr.bundle.js"></script>
+  <script src="ui.js"></script>
+  <script src="account.js"></script>
+  <script src="feed.js"></script>
+  <script src="nostr.js"></script>
+</body>
+
+</html>
