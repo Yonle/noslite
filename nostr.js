@@ -82,8 +82,7 @@ async function gp() {
     }]);
     evs.forEach(sp);
 
-    bb.innerText = `${evs.length} profiles succesfully rendered.`;
-    bb.style.visibility = "visible";
+    bb.style.visibility = "hidden";
   } catch {
     bb.innerText = "Failed fetching profiles.";
     bb.style.visibility = "visible";
