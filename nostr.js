@@ -17,8 +17,8 @@ async function getDefaultFeed() {
 
   for (const id of sess) {
     sendToRelays("CLOSE", id);
-    sess.delete(id);
   }
+  sess.clear();
 
   if (privkey) {
     bb.innerText = "Fetching contact list....";
@@ -83,6 +83,12 @@ async function gp() {
 }
 
 function myprofile() {
+  for (const id of sess) {
+    sendToRelays("CLOSE", id);
+  }
+  sess.clear();
+  ps.innerHTML = "";
+  
   if (!authors[location.hash.slice(3)]) return sendToRelays("REQ", "currentprofile", { kinds: [0], authors: [location.hash.slice(3)], limit: 1 });
   lp(location.hash.slice(3));
 }

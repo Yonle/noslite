@@ -12,8 +12,8 @@ function updateRelaysList() {
 async function lt(id) {
   for (const id of sess) {
     sendToRelays("CLOSE", id);
-    sess.delete(id);
   }
+  sess.clear();
   let rootpost = document.getElementById("n_" + id)
   if (rootpost) {
     rootpost = rootpost.cloneNode(true);
@@ -47,8 +47,8 @@ async function lp(pubkey) {
   inThread = true;
   for (const id of sess) {
     sendToRelays("CLOSE", id);
-    sess.delete(id);
   }
+  sess.clear();
   let profile = authors[pubkey];
   
   if (!profile) {
