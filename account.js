@@ -58,7 +58,9 @@ async function post() {
     content: $("#textareapost")[0].value,
     tags: []
   };
-  
+
+  if (inThread) tags.push(["e", inThread]);
+
   const signed = await signEvent(event);
   if (!signed) return;
   sendToRelays("EVENT", signed);

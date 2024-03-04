@@ -1,6 +1,8 @@
 const $ = document.querySelectorAll.bind(document);
 const defaultBackground = document.body.style.background;
 
+let inThread = false;
+
 function updateRelaysList() {
   localStorage.setItem("relays", JSON.stringify($("#relays_textbox")[0].value.split("\n")));
   location.hash = "#";
@@ -14,6 +16,9 @@ async function lt(id) {
     sendToRelays("CLOSE", id);
   }
   sess.clear();
+
+  inThread = id;
+  $("#postbtn")[0].innerText = "Reply to this note";
   let rootpost = document.getElementById("n_" + id)
   if (rootpost) {
     rootpost = rootpost.cloneNode(true);

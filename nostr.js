@@ -3,12 +3,12 @@ let relays = JSON.parse(localStorage.getItem("relays") || "[]");
 let authors = {};
 let contacts = [];
 let sub = null;
-let inThread = false;
 
 relays = relays.filter(i => !!i);
 
 let contactAsked = false;
 async function getDefaultFeed() {
+  $("#postbtn")[0].innerText = "Post";
   if (!relays.length) {
     bb.innerText = "No relay was configured. Please configure one.";
     location.hash = "#relays";
