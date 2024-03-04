@@ -88,6 +88,7 @@ function myprofile() {
   }
   sess.clear();
   ps.innerHTML = "";
+  location.hash = "#u_" + window.NostrTools.getPublicKey(privkey);
 
   sendToRelays("REQ", "currentprofile", { kinds: [0], authors: [location.hash.slice(3)], limit: 1 });
 }
