@@ -59,28 +59,29 @@ async function lp(pubkey) {
     profile = (typeof(profile) === "string") ? JSON.parse(profile.content) : profile;
     if (profile.banner) {
       const banner = document.createElement("img");
-      const img = document.createElement("img");
+      const avatar = document.createElement("img");
       const name = document.createElement(`h2`);
       const about = document.createElement("pre");
 
       banner.src = tme(profile.banner);
-      img.src = tme(profile.picture);
+      avatar.src = tme(profile.picture);
       name.innerText = profile.name || profile.meta_name;
       about.innerText = profile.about;
 
       banner.style.width = "100vw";
-
-      img.style.width = "120px";
+      avatar.style.width = "120px";
+      avatar.style.float = "right";
       name.style.margin = "0";
 
-      const mainprof = document.createElement("div");
+      const mp = document.createElement("div");
+      mp.style.display = "flow-root";
+      mp.style["margin-bottom"] = "1em";
+      mp.appendChild(banner);
+      mp.appendChild(avatar);
+      mp.appendChild(name);
+      mp.appendChild(about);
 
-      mainprof.appendChild(img);
-      mainprof.appendChild(name);
-
-      ps.appendChild(banner);
-      ps.appendChild(mainprof);
-      ps.appendChild(about);
+      ps.appendChild(mp);
 
       const currentSess = "notes_" + Date.now();
       sess.add(currentSess);

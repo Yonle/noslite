@@ -88,9 +88,8 @@ function myprofile() {
   }
   sess.clear();
   ps.innerHTML = "";
-  
-  if (!authors[location.hash.slice(3)]) return sendToRelays("REQ", "currentprofile", { kinds: [0], authors: [location.hash.slice(3)], limit: 1 });
-  lp(location.hash.slice(3));
+
+  sendToRelays("REQ", "currentprofile", { kinds: [0], authors: [location.hash.slice(3)], limit: 1 });
 }
 
 if (location.hash.startsWith("#u_")) {
