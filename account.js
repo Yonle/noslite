@@ -59,7 +59,7 @@ async function post() {
     tags: []
   };
 
-  if (inThread) tags.push(["e", inThread]);
+  if (inThread) event.tags.push(["e", inThread]);
 
   const signed = await signEvent(event);
   if (!signed) return;
